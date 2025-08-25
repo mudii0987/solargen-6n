@@ -1,164 +1,216 @@
-// Mobile Navigation
+// Navigation Toggle
 document.addEventListener("DOMContentLoaded", () => {
-  const mobileMenuBtn = document.getElementById("mobileMenuBtn")
-  const mobileMenu = document.getElementById("mobileMenu")
+  const navToggle = document.getElementById("nav-toggle")
+  const navMenu = document.getElementById("nav-menu")
 
-  mobileMenuBtn.addEventListener("click", () => {
-    mobileMenuBtn.classList.toggle("active")
-    mobileMenu.classList.toggle("active")
-  })
-
-  // Close mobile menu when clicking on links
-  const mobileNavLinks = document.querySelectorAll(".mobile-nav-link")
-  mobileNavLinks.forEach((link) => {
-    link.addEventListener("click", () => {
-      mobileMenuBtn.classList.remove("active")
-      mobileMenu.classList.remove("active")
-    })
-  })
-})
-
-// Hero Carousel
-class HeroCarousel {
-  constructor() {
-    this.currentSlide = 0
-    this.slides = document.querySelectorAll(".carousel-slide")
-    this.dots = document.querySelectorAll(".carousel-dot")
-    this.prevBtn = document.getElementById("carouselPrev")
-    this.nextBtn = document.getElementById("carouselNext")
-    this.autoPlayInterval = null
-
-    this.init()
-  }
-
-  init() {
-    // Add event listeners
-    this.prevBtn.addEventListener("click", () => this.prevSlide())
-    this.nextBtn.addEventListener("click", () => this.nextSlide())
-
-    // Dot navigation
-    this.dots.forEach((dot, index) => {
-      dot.addEventListener("click", () => this.goToSlide(index))
+  if (navToggle && navMenu) {
+    navToggle.addEventListener("click", () => {
+      navMenu.classList.toggle("active")
+      navToggle.classList.toggle("active")
     })
 
-    // Start autoplay
-    this.startAutoPlay()
-
-    // Pause autoplay on hover
-    const carousel = document.getElementById("heroCarousel")
-    carousel.addEventListener("mouseenter", () => this.stopAutoPlay())
-    carousel.addEventListener("mouseleave", () => this.startAutoPlay())
+    // Close menu when clicking on a link
+    const navLinks = document.querySelectorAll(".nav-link")
+    navLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        navMenu.classList.remove("active")
+        navToggle.classList.remove("active")
+      })
+    })
   }
 
-  goToSlide(index) {
-    // Remove active class from current slide and dot
-    this.slides[this.currentSlide].classList.remove("active")
-    this.dots[this.currentSlide].classList.remove("active")
+  // Hero Carousel
+  const heroCarousel = document.getElementById("hero-carousel")
+  if (heroCarousel) {
+    const slides = heroCarousel.querySelectorAll(".hero-slide")
+    const indicators = document.querySelectorAll(".indicator")
+    let currentSlide = 0
+    let slideInterval
 
-    // Update current slide
-    this.currentSlide = index
+    function showSlide(index) {
+      // Remove active class from all slides and indicators
+      slides.forEach((slide) => slide.classList.remove("active"))
+      indicators.forEach((indicator) => indicator.classList.remove("active"))
 
-    // Add active class to new slide and dot
-    this.slides[this.currentSlide].classList.add("active")
-    this.dots[this.currentSlide].classList.add("active")
-  }
-
-  nextSlide() {
-    const nextIndex = (this.currentSlide + 1) % this.slides.length
-    this.goToSlide(nextIndex)
-  }
-
-  prevSlide() {
-    const prevIndex = (this.currentSlide - 1 + this.slides.length) % this.slides.length
-    this.goToSlide(prevIndex)
-  }
-
-  startAutoPlay() {
-    this.autoPlayInterval = setInterval(() => {
-      this.nextSlide()
-    }, 5000)
-  }
-
-  stopAutoPlay() {
-    if (this.autoPlayInterval) {
-      clearInterval(this.autoPlayInterval)
-      this.autoPlayInterval = null
+      // Add active class to current slide and indicator
+      slides[index].classList.add("active")
+      indicators[index].classList.add("active")
     }
+
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % slides.length
+      showSlide(currentSlide)
+    }
+
+    function startSlideshow() {
+      slideInterval = setInterval(nextSlide, 5000) // Change slide every 5 seconds
+    }
+
+    function stopSlideshow() {
+      clearInterval(slideInterval)
+    }
+
+    // Add click event to indicators
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener("click", () => {
+        currentSlide = index
+        showSlide(currentSlide)
+        stopSlideshow()
+        startSlideshow() // Restart the slideshow
+      })
+    })
+
+    // Start the slideshow
+    startSlideshow()
+
+    // Pause slideshow on hover
+    heroCarousel.addEventListener("mouseenter", stopSlideshow)
+    heroCarousel.addEventListener("mouseleave", startSlideshow)
   }
-}
 
-// Initialize carousel when DOM is loaded
-document.addEventListener("DOMContentLoaded", () => {
-  new HeroCarousel()
-})
-
-// Quote Form Handler
-document.addEventListener("DOMContentLoaded", () => {
-  const quoteForm = document.getElementById("quoteForm")
-  const submitBtn = document.getElementById("submitBtn")
-
+  // Form Submissions
+  const quoteForm = document.getElementById("quote-form")
   if (quoteForm) {
-    quoteForm.addEventListener("submit", async (e) => {
+    quoteForm.addEventListener("submit", (e) => {
       e.preventDefault()
-
-      // Disable submit button and show loading state
-      submitBtn.disabled = true
-      submitBtn.textContent = "Submitting..."
 
       // Get form data
       const formData = new FormData(quoteForm)
-      const data = {
-        name: formData.get("name"),
-        email: formData.get("email"),
-        phone: formData.get("phone"),
-        company: formData.get("company"),
-        projectType: formData.get("projectType"),
-        message: formData.get("message"),
+      const data = Object.fromEntries(formData)
+
+      // Basic validation
+      const requiredFields = ["company", "contact-person", "email", "phone"]
+      let isValid = true
+
+      requiredFields.forEach((field) => {
+        const input = document.getElementById(field)
+        if (!data[field] || data[field].trim() === "") {
+          input.style.borderColor = "#ef4444"
+          isValid = false
+        } else {
+          input.style.borderColor = "#e5e7eb"
+        }
+      })
+
+      if (!isValid) {
+        alert("Please fill in all required fields.")
+        return
       }
 
-      try {
-        // Simulate form submission (replace with actual endpoint)
-        await new Promise((resolve) => setTimeout(resolve, 2000))
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(data.email)) {
+        document.getElementById("email").style.borderColor = "#ef4444"
+        alert("Please enter a valid email address.")
+        return
+      }
 
-        // Show success message
+      // Simulate form submission
+      const submitButton = quoteForm.querySelector('button[type="submit"]')
+      const originalText = submitButton.textContent
+      submitButton.textContent = "Submitting..."
+      submitButton.disabled = true
+
+      // Simulate API call
+      setTimeout(() => {
         alert("Thank you for your inquiry! We will contact you within 24 hours.")
-
-        // Reset form
         quoteForm.reset()
-      } catch (error) {
-        alert("There was an error submitting your request. Please try again.")
-      } finally {
-        // Re-enable submit button
-        submitBtn.disabled = false
-        submitBtn.textContent = "Request Quote"
-      }
+        submitButton.textContent = originalText
+        submitButton.disabled = false
+      }, 2000)
     })
   }
-})
 
-// Smooth scrolling for anchor links
-document.addEventListener("DOMContentLoaded", () => {
+  const contactForm = document.getElementById("contact-form")
+  if (contactForm) {
+    contactForm.addEventListener("submit", (e) => {
+      e.preventDefault()
+
+      // Get form data
+      const formData = new FormData(contactForm)
+      const data = Object.fromEntries(formData)
+
+      // Basic validation
+      const requiredFields = ["name", "company", "email", "phone", "message"]
+      let isValid = true
+
+      requiredFields.forEach((field) => {
+        const input = document.getElementById(field)
+        if (!data[field] || data[field].trim() === "") {
+          input.style.borderColor = "#ef4444"
+          isValid = false
+        } else {
+          input.style.borderColor = "#e5e7eb"
+        }
+      })
+
+      if (!isValid) {
+        alert("Please fill in all required fields.")
+        return
+      }
+
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(data.email)) {
+        document.getElementById("email").style.borderColor = "#ef4444"
+        alert("Please enter a valid email address.")
+        return
+      }
+
+      // Simulate form submission
+      const submitButton = contactForm.querySelector('button[type="submit"]')
+      const originalText = submitButton.textContent
+      submitButton.textContent = "Sending..."
+      submitButton.disabled = true
+
+      // Simulate API call
+      setTimeout(() => {
+        alert("Thank you for your message! We will get back to you soon.")
+        contactForm.reset()
+        submitButton.textContent = originalText
+        submitButton.disabled = false
+      }, 2000)
+    })
+  }
+
+  // FAQ Toggle
+  const faqItems = document.querySelectorAll(".faq-item")
+  faqItems.forEach((item) => {
+    const question = item.querySelector(".faq-question")
+    question.addEventListener("click", () => {
+      const isActive = item.classList.contains("active")
+
+      // Close all FAQ items
+      faqItems.forEach((faqItem) => {
+        faqItem.classList.remove("active")
+      })
+
+      // Open clicked item if it wasn't active
+      if (!isActive) {
+        item.classList.add("active")
+      }
+    })
+  })
+
+  // Smooth scrolling for anchor links
   const anchorLinks = document.querySelectorAll('a[href^="#"]')
-
   anchorLinks.forEach((link) => {
     link.addEventListener("click", function (e) {
       e.preventDefault()
-
-      const targetId = this.getAttribute("href").substring(1)
-      const targetElement = document.getElementById(targetId)
+      const targetId = this.getAttribute("href")
+      const targetElement = document.querySelector(targetId)
 
       if (targetElement) {
-        targetElement.scrollIntoView({
+        const offsetTop = targetElement.offsetTop - 80 // Account for fixed nav
+        window.scrollTo({
+          top: offsetTop,
           behavior: "smooth",
-          block: "start",
         })
       }
     })
   })
-})
 
-// Add scroll-based animations
-function addScrollAnimations() {
+  // Intersection Observer for animations
   const observerOptions = {
     threshold: 0.1,
     rootMargin: "0px 0px -50px 0px",
@@ -167,15 +219,77 @@ function addScrollAnimations() {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        entry.target.classList.add("animate-fade-in")
+        entry.target.classList.add("animate-fade-in-up")
       }
     })
   }, observerOptions)
 
-  // Observe elements that should animate on scroll
-  const animateElements = document.querySelectorAll(".opportunity-card, .service-card, .stat-item")
-  animateElements.forEach((el) => observer.observe(el))
+  // Observe elements for animation
+  const animateElements = document.querySelectorAll(
+    ".stat-item, .opportunity-card, .service-card, .feature-card, .mvv-item, .process-step",
+  )
+  animateElements.forEach((element) => {
+    observer.observe(element)
+  })
+
+  // Active navigation link highlighting
+  const sections = document.querySelectorAll("section[id]")
+  const navLinks = document.querySelectorAll(".nav-link")
+
+  function highlightNavLink() {
+    let current = ""
+    sections.forEach((section) => {
+      const sectionTop = section.offsetTop - 100
+      const sectionHeight = section.offsetHeight
+      if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+        current = section.getAttribute("id")
+      }
+    })
+
+    navLinks.forEach((link) => {
+      link.classList.remove("active")
+      if (link.getAttribute("href") === `#${current}`) {
+        link.classList.add("active")
+      }
+    })
+  }
+
+  window.addEventListener("scroll", highlightNavLink)
+
+  // WhatsApp button animation
+  const whatsappButton = document.querySelector(".whatsapp-float")
+  if (whatsappButton) {
+    // Add pulse animation
+    setInterval(() => {
+      whatsappButton.style.animation = "none"
+      setTimeout(() => {
+        whatsappButton.style.animation = "pulse 2s infinite"
+      }, 10)
+    }, 10000)
+  }
+})
+
+// CSS for pulse animation
+const style = document.createElement("style")
+style.textContent = `
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+`
+document.head.appendChild(style)
+
+// Utility function for form validation
+function validateEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return re.test(email)
 }
 
-// Initialize scroll animations when DOM is loaded
-document.addEventListener("DOMContentLoaded", addScrollAnimations)
+function validatePhone(phone) {
+  const re = /^[+]?[1-9][\d]{0,15}$/
+  return re.test(phone.replace(/\s/g, ""))
+}
+
+// Console log for debugging
+console.log("[v0] SolarGen KE website loaded successfully")

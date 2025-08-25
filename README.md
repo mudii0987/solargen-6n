@@ -1,30 +1,65 @@
-# Solar energy projects
+# SolarGen KE - Static Website
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+*Professional renewable energy consulting website for Kenya*
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/am11nfx01-3978s-projects/v0-solar-energy-projects)
 [![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/projects/gB6QKtuTB74)
 
 ## Overview
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+SolarGen KE is a specialized consulting and procurement agency dedicated to connecting private companies with lucrative government renewable energy tenders and contracts in Kenya. This is a fully static website built with pure HTML, CSS, and vanilla JavaScript.
+
+## Features
+
+- **Responsive Design**: Mobile-first approach with modern, clean aesthetics
+- **Hero Carousel**: Auto-rotating image carousel showcasing solar projects
+- **Contact Forms**: Functional quote request and contact forms with validation
+- **WhatsApp Integration**: Floating WhatsApp button for instant communication
+- **SEO Optimized**: Proper meta tags and semantic HTML structure
+- **Fast Loading**: No frameworks or build processes required
+
+## File Structure
+
+\`\`\`
+├── index.html          # Homepage
+├── services.html       # Services page
+├── about.html         # About page
+├── contact.html       # Contact page
+├── style.css          # All styles
+├── script.js          # All JavaScript functionality
+└── public/
+    └── images/        # All website images
+\`\`\`
 
 ## Deployment
 
-Your project is live at:
+This static website can be deployed on any web hosting service:
 
-**[https://vercel.com/am11nfx01-3978s-projects/v0-solar-energy-projects](https://vercel.com/am11nfx01-3978s-projects/v0-solar-energy-projects)**
+- **Static Hosting**: Netlify, Vercel, GitHub Pages
+- **Traditional Hosting**: Any web server with HTML support
+- **CDN**: Can be served directly from a CDN
 
-## Build your app
+Simply upload all files to your web server's public directory.
 
-Continue building your app on:
+## Local Development
 
-**[https://v0.app/chat/projects/gB6QKtuTB74](https://v0.app/chat/projects/gB6QKtuTB74)**
+1. Clone this repository
+2. Open `index.html` in your web browser
+3. Or serve with a local server:
+   \`\`\`bash
+   # Python
+   python -m http.server 8000
+   
+   # Node.js
+   npx serve .
+   \`\`\`
 
-## How It Works
+## Contact Information
 
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+- **Email**: info@solargenke.com
+- **Phone**: +254-701089741
+- **Location**: Nairobi, Kenya
+- **WhatsApp**: +254-701089741
+
+## License
+
+© 2025 SolarGen KE. All rights reserved.
